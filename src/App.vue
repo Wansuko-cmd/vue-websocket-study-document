@@ -1,26 +1,43 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <MessageList :messages="messages" />
+    <MessageForm :on-send="(message) => onSend(message)"/>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import MessageList from "@/components/show/MessageList";
+import MessageForm from "@/components/form/MessageForm";
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    MessageForm,
+    MessageList
+  },
+  data () {
+    return {
+      connection: null,
+      messages: []
+    }
+  },
+  methods: {
+    onSend: function (message) {
+      console.log(message)
+      this.connection.send(message)
+    }
+  },
+  mounted() {
+    this.connection = new WebSocket("")
+
+    this.connection.onopen = function (event) {
+      console.log(event)
+      console.log("Success")
+    }
+
+    this.connection.onmessage = function (event) {
+      this.messages.add(event)
+    }
   }
 }
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
